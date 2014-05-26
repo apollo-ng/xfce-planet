@@ -1,0 +1,9 @@
+*.pyc
+*~
+\#*
+.#*
+*.swp
+.DStore/
+thumbs.db
+xplanet_output.png
+.local.cfg
