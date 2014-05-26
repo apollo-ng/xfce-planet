@@ -1,13 +1,13 @@
 #!/bin/bash
 
-BASEDIR="${HOME}/.xplanet"
+BASEDIR="${HOME}.xplanet"
 
 # Default Configuration
-# Create your own .local.cfg to override these
+# Edit .local.cfg to override these
 
 OUTPUT="${BASEDIR}/xplanet_output.png"
 
-# View
+# Set your monitor resolution and viewing distance
 
 RES="1600x1200"
 RAD="41"
@@ -17,7 +17,15 @@ RAD="41"
 LAT="35"
 LON="11"
 
+# Fonts
+
+FONT=${BASEDIR}/fonts/pf_tempesta_seven.ttf
+FONTSIZE=8
+
 # Window Manager background image reload trigger
+
+# XFCE: xfdesktop --reload
+# Other: ??
 
 WM_RELOAD_CMD="xfdesktop --reload"
 
@@ -34,6 +42,28 @@ if [ -e ${BASEDIR}/.local.cfg ];
 then
     source ${BASEDIR}/.local.cfg
 fi
+
+# Create a fresh default config for xplanet
+# xplanet doesn't appreciate ~/ or $HOME in default config
+
+DEFCFG=$(cat << EOF
+satellite_file=${BASEDIR}/satellites/combined
+font=${FONT}
+fontsize=${FONTSIZE}
+
+[earth]
+"Earth"
+map=${BASEDIR}/world/earth.jpg
+night_map=${BASEDIR}/world/night.jpg
+bump_map=${BASEDIR}/world/bump.jpg
+specular_map=${BASEDIR}/world/specular.jpg
+cloud_map=${BASEDIR}/world/clouds.jpg
+bump_scale=1
+shade=10
+EOF
+)
+
+echo "${DEFCFG}" > ${BASEDIR}/default
 
 ########################################################################
 # Main Loop
@@ -78,8 +108,8 @@ do
             -geometry ${RES}                                           \
             -radius ${RAD}                                             \
             -quality 90                                                \
-            -font ${BASEDIR}/fonts/pf_tempesta_seven.ttf               \
-            -fontsize 8                                                \
+            -font ${FONT}                                              \
+            -fontsize ${FONTSIZE}                                      \
             -starmap ${BASEDIR}/stars/BSC                              \
             -searchdir ${BASEDIR}                                      \
             -output ${OUTPUT}                                          \
