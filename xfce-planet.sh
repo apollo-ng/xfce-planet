@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR="/home/chrono/.xplanet"
+BASEDIR="${HOME}/.xplanet"
 
 # Default Configuration
 # Create your own .local.cfg to override these
