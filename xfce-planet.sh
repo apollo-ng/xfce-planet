@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR="${HOME}.xplanet"
+BASEDIR="${HOME}/.xplanet"
 
 # Default Configuration
 # Edit .local.cfg to override these
