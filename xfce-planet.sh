@@ -14,7 +14,7 @@ RAD="41"
 
 # Observer position (Eurocentric View)
 
-LAT="35"
+LAT="30"
 LON="11"
 
 # Fonts
