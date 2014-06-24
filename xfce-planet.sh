@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 BASEDIR="${HOME}/.xplanet"
 
@@ -72,7 +72,7 @@ while true
 do
     # Download weather image if local copy is older than 3h ############
 
-    if test "$(find ${BASEDIR}/world/clouds.jpg -mmin +180)";
+    if [ ! -e ${BASEDIR}/world/clouds.jpg ] || test "$(find ${BASEDIR}/world/clouds.jpg -mmin +60)";
     then
         cd ${BASEDIR}/world/
         ${BASEDIR}/world/download-clouds.sh
@@ -91,19 +91,25 @@ do
     # Check/Link the appropriate VE/BM texture for this month ##########
 
     MONTH=$(date +%m)
-    LINK=$(ls -al ${BASEDIR}/world/earth.jpg | awk {'print $11;'})
+    cd ${BASEDIR}/world/
 
-    if [ ${MONTH} != ${LINK:0:2} ];
+    if [ -e ${BASEDIR}/world/earth.jpg ];
     then
-        cd ${BASEDIR}/world/
-        rm earth.jpg
+        LINK=$(ls -al ${BASEDIR}/world/earth.jpg | awk {'print $11;'})
+        if [ "${MONTH}" != "${LINK:0:2}" ];
+        then
+            rm earth.jpg
+            ln -s ${MONTH}.jpg earth.jpg
+        fi
+    else
         ln -s ${MONTH}.jpg earth.jpg
-        cd ..
     fi
+
+    cd ..
 
     # Call xplanet #####################################################
 
-    xplanet \
+    nice -n 19 xplanet                                                 \
             -latitude ${LAT} -longitude ${LON}                         \
             -geometry ${RES}                                           \
             -radius ${RAD}                                             \
