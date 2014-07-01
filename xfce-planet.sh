@@ -1,5 +1,9 @@
 #!/bin/sh
 
+################################################################################
+# Default configuration - Edit .local.cfg to override these                    #
+################################################################################
+
 BASEDIR="${HOME}/.xplanet"
 
 # Default Configuration
@@ -17,7 +21,7 @@ RAD="41"
 LAT="30"
 LON="11"
 
-# Fonts
+# Fonts (doesn't seem to work yet)
 
 FONT=${BASEDIR}/fonts/pf_tempesta_seven.ttf
 FONTSIZE=10
@@ -25,17 +29,19 @@ FONTSIZE=10
 # Window Manager background image reload trigger
 
 # XFCE:     "xfdesktop --reload"   tells xfce to reload the desktop
-# LightDM:  ""                     image is automatically updated (Thanks to Marco)
+# LightDM:  ""                     image is automatically updated (Tested by Marco)
 # Other:    "?"                    We appreciate your feedback
 
 WM_RELOAD_CMD="xfdesktop --reload"
 
-# FIXME: On laptops, the timeout should be dynamically changed based on
-# the ACPI state - so that a system running on battery automatically
-# decreases the update frequency (SLEEP) to enhance battery endurance
-# when off-grid.
+# Adjust your desired update intervalls for grid/off-grid usage (seconds)
 
-SLEEP=5
+SLEEP_ON_AC=5
+SLEEP_ON_BAT=20
+
+################################################################################
+################################################################################
+################################################################################
 
 # Load local config (.local.cfg) to override above settings
 
@@ -55,7 +61,8 @@ DEFCFG=$(cat << EOF
 satellite_file=${BASEDIR}/satellites/iss
 satellite_file=${BASEDIR}/satellites/noss
 satellite_file=${BASEDIR}/satellites/usa
-#satellite_file=${BASEDIR}/satellites/iridum
+satellite_file=${BASEDIR}/satellites/iridum
+satellite_file=${BASEDIR}/satellites/geo
 #marker_file=${BASEDIR}/updatelabel
 
 [earth]
@@ -72,12 +79,13 @@ EOF
 
 echo "${DEFCFG}" > ${BASEDIR}/default
 
-########################################################################
-# Main Loop
+################################################################################
+# MAIN                                                                         #
+################################################################################
 
 while true
 do
-    # Download weather image if local copy is older than 3h ############
+    # Download weather image if local copy is older than 3h ####################
 
     if [ ! -e ${BASEDIR}/world/clouds.jpg ] || test "$(find ${BASEDIR}/world/clouds.jpg -mmin +60)";
     then
@@ -86,7 +94,7 @@ do
         cd ..
     fi
 
-    # Download new TLE package if local elements are older than 24h ####
+    # Download new TLE package if local elements are older than 24h ############
 
     if test "$(find ${BASEDIR}/satellites/.last_updated -mmin +1440)";
     then
@@ -95,7 +103,7 @@ do
         cd ..
     fi
 
-    # Check/Link the appropriate VE/BM texture for this month ##########
+    # Check/Link the appropriate VE/BM texture for this month ##################
 
     MONTH=$(date +%m)
     cd ${BASEDIR}/world/
@@ -114,28 +122,41 @@ do
 
     cd ..
 
-    # Call xplanet #####################################################
+    # Call xplanet #############################################################
 
-    nice -n 19 xplanet                                                 \
-            -latitude ${LAT} -longitude ${LON}                         \
-            -geometry ${RES}                                           \
-            -radius ${RAD}                                             \
-            -quality 90                                                \
-            -font ${FONT}                                              \
-            -fontsize ${FONTSIZE}                                      \
-            -starmap ${BASEDIR}/stars/BSC                              \
-            -searchdir ${BASEDIR}                                      \
-            -output ${OUTPUT}                                          \
-            -pango                                                     \
-            -num_times 1                                               \
+    nice -n 19 xplanet                                                         \
+            -latitude ${LAT} -longitude ${LON}                                 \
+            -geometry ${RES}                                                   \
+            -radius ${RAD}                                                     \
+            -quality 90                                                        \
+            -font ${FONT}                                                      \
+            -fontsize ${FONTSIZE}                                              \
+            -starmap ${BASEDIR}/stars/BSC                                      \
+            -searchdir ${BASEDIR}                                              \
+            -output ${OUTPUT}                                                  \
+            -pango                                                             \
+            -num_times 1                                                       \
             -verbosity -1
 
-    # Tell the window manager to update the background image ###########
+    # Tell the window manager to update the background image (if needed) #######
 
-    ${WM_RELOAD_CMD}
+    if [ "${WM_RELOAD_CMD}" != "" ];
+    then
+        ${WM_RELOAD_CMD}
+    fi
 
-    # Go to sleep
+    # Go to sleep - The timeout is dynamically changed based on ACPI state
+    # so that a system running on battery automatically decreases the update
+    # frequency (longer SLEEP) to enhance battery endurance when off-grid.
 
-    sleep ${SLEEP}
+    if [ -r /sys/class/power_supply/AC/online ];
+    then
+        if [ $(cat /sys/class/power_supply/AC/online) -eq 1 ];
+        then
+            sleep ${SLEEP_ON_AC}
+        fi
+    else
+        sleep ${SLEEP_ON_BAT}
+    fi
 
 done
