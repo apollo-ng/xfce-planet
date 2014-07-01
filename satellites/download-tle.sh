@@ -75,6 +75,8 @@ fi
 
 # Geostationary (GEO) ##########################################################
 
+# Remember that you need to zoom out your view (change RAD) to see these :)
+
 wget http://www.celestrak.com/NORAD/elements/geo.txt --no-cache -q -O geo.txt > /dev/null 2>&1
 
 if [ -s geo.txt ];
@@ -86,7 +88,7 @@ then
     while read in;
     do
         SAT=$(cat geo.tle | grep --no-group-separator -A2 "${in}" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  ${in}\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> geo
+        echo "${SAT} \"  ${in}\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9}" >> geo
     done < .geo.tmp
     rm .geo.tmp
 fi
