@@ -1,0 +1,51 @@
+################################################################################
+# xfce-planet configuration                                                    #
+################################################################################
+
+OUTPUT="${BASEDIR}/xplanet_output.png"
+
+# Set your monitor resolution and viewing distance
+
+RES="1600x1200"
+RAD="41"
+
+# Observer position (Eurocentric View)
+
+LAT="30"
+LON="11"
+
+# Fonts
+
+FONT=${BASEDIR}/fonts/pf_tempesta_seven.ttf
+FONTSIZE=10
+
+# Window Manager background image reload trigger
+
+# XFCE:     "xfdesktop --reload"   tells xfce to reload the desktop
+# LightDM:  ""                     image is automatically updated (Tested by Marco)
+# Other:    "?"                    We appreciate your feedback
+
+WM_RELOAD_CMD="xfdesktop --reload"
+
+# Adjust your desired update intervalls for grid/off-grid usage (seconds)
+
+SLEEP_ON_AC=5
+SLEEP_ON_BAT=20
+
+# Satellite file switch delay (number of renders between switches)
+DELAY=5
+
+# Defaul xplanet parameters
+
+DEFCFG=$(cat << EOF
+[earth]
+"Earth"
+map=${BASEDIR}/world/earth.jpg
+night_map=${BASEDIR}/world/night.jpg
+bump_map=${BASEDIR}/world/bump.jpg
+specular_map=${BASEDIR}/world/specular.jpg
+cloud_map=${BASEDIR}/world/clouds.jpg
+bump_scale=1
+shade=10
+EOF
+)

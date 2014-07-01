@@ -6,5 +6,5 @@
 .DStore/
 thumbs.db
 xplanet_output.png
-.local.cfg
+xfce-planet.conf
 default

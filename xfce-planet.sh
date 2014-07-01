@@ -1,83 +1,54 @@
 #!/bin/sh
 
-################################################################################
-# Default configuration - Edit .local.cfg to override these                    #
-################################################################################
-
 BASEDIR="${HOME}/.xplanet"
 
-# Default Configuration
-# Edit .local.cfg to override these
-
-OUTPUT="${BASEDIR}/xplanet_output.png"
-
-# Set your monitor resolution and viewing distance
-
-RES="1600x1200"
-RAD="41"
-
-# Observer position (Eurocentric View)
-
-LAT="30"
-LON="11"
-
-# Fonts (doesn't seem to work yet)
-
-FONT=${BASEDIR}/fonts/pf_tempesta_seven.ttf
-FONTSIZE=10
-
-# Window Manager background image reload trigger
-
-# XFCE:     "xfdesktop --reload"   tells xfce to reload the desktop
-# LightDM:  ""                     image is automatically updated (Tested by Marco)
-# Other:    "?"                    We appreciate your feedback
-
-WM_RELOAD_CMD="xfdesktop --reload"
-
-# Adjust your desired update intervalls for grid/off-grid usage (seconds)
-
-SLEEP_ON_AC=5
-SLEEP_ON_BAT=20
-
 ################################################################################
-################################################################################
+# INIT                                                                         #
 ################################################################################
 
-# Load local config (.local.cfg) to override above settings
-
-if [ -e ${BASEDIR}/.local.cfg ];
+if [ -r ${BASEDIR}/xfce-planet.conf ];
 then
-    source ${BASEDIR}/.local.cfg
+    source ${BASEDIR}/xfce-planet.conf
+else
+    echo "Hmm, it seems, I have made it to another new box... sweet :)"
+    echo "Let me just check your system if we got everything we'll need"
+    # FIXME: We should have a quick check for utils like
+    #     dos2unix
+    #     wget
+    #     convert
+    #     xplanet
+    #     unzip
+    # here...
+    cp xfce-planet.conf.sample xfce-planet.conf
+    source ${BASEDIR}/xfce-planet.conf
+    echo "I've copied the sample config file to xfce-planet.conf"
 fi
 
-# Create a fresh default config for xplanet
-# xplanet doesn't appreciate ~/ or $HOME in default config
-#
-# Add/Remove satellite_file=${BASEDIR}/satellites/[your_tle_conf]
-# to the DEFCFG as needed.
+# Download new TLE package if local elements are older than 24h ################
 
+if [ ! -e ${BASEDIR}/satellites/.last_updated ] || test "$(find ${BASEDIR}/satellites/.last_updated -mmin +1440)";
+then
+    cd ${BASEDIR}/satellites/
+    ${BASEDIR}/satellites/download-tle.sh
+    cd ..
+fi
 
-DEFCFG=$(cat << EOF
-satellite_file=${BASEDIR}/satellites/iss
-satellite_file=${BASEDIR}/satellites/noss
-satellite_file=${BASEDIR}/satellites/usa
-satellite_file=${BASEDIR}/satellites/iridum
-satellite_file=${BASEDIR}/satellites/geo
-#marker_file=${BASEDIR}/updatelabel
+# Pick up the TLEs prepared by download-tle.sh in satellites/ ##################
 
-[earth]
-"Earth"
-map=${BASEDIR}/world/earth.jpg
-night_map=${BASEDIR}/world/night.jpg
-bump_map=${BASEDIR}/world/bump.jpg
-specular_map=${BASEDIR}/world/specular.jpg
-cloud_map=${BASEDIR}/world/clouds.jpg
-bump_scale=1
-shade=10
-EOF
-)
+TLE_COUNT=0
 
-echo "${DEFCFG}" > ${BASEDIR}/default
+for tle_file in $(find ${BASEDIR}/satellites/ -name "*.tle");
+do
+    FILE=$(basename "${tle_file}")
+    if [ "${FILE%.*}" != "iss" ];
+    then
+        AR_TLE[$TLE_COUNT]=${FILE%.*}
+        let TLE_COUNT=TLE_COUNT+1
+    fi
+done
+
+COUNTER=0
+DELAY_COUNT=0
 
 ################################################################################
 # MAIN                                                                         #
@@ -85,7 +56,7 @@ echo "${DEFCFG}" > ${BASEDIR}/default
 
 while true
 do
-    # Download weather image if local copy is older than 3h ####################
+    # Download weather image if local copy is older than 1h ####################
 
     if [ ! -e ${BASEDIR}/world/clouds.jpg ] || test "$(find ${BASEDIR}/world/clouds.jpg -mmin +60)";
     then
@@ -121,6 +92,27 @@ do
     fi
 
     cd ..
+
+    # Prep xplanets default config for this run ################################
+
+    echo "satellite_file=${BASEDIR}/satellites/iss" > ${BASEDIR}/default
+    echo "satellite_file=${BASEDIR}/satellites/${AR_TLE[${COUNTER}]}" >> ${BASEDIR}/default
+    echo "${DEFCFG}" >> ${BASEDIR}/default
+
+    # Switch between available tle files with a defined delay ##################
+
+    if [ ${COUNTER} -lt $TLE_COUNT ];
+    then
+        if [ ${DELAY_COUNT} -lt ${DELAY} ];
+        then
+            let DELAY_COUNT=DELAY_COUNT+1
+        else
+            let COUNTER=COUNTER+1
+            DELAY_COUNT=0
+        fi
+    else
+        COUNTER=0
+    fi
 
     # Call xplanet #############################################################
 
