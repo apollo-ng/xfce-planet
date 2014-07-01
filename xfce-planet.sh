@@ -20,12 +20,13 @@ LON="11"
 # Fonts
 
 FONT=${BASEDIR}/fonts/pf_tempesta_seven.ttf
-FONTSIZE=8
+FONTSIZE=10
 
 # Window Manager background image reload trigger
 
-# XFCE: xfdesktop --reload
-# Other: ??
+# XFCE:     "xfdesktop --reload"   tells xfce to reload the desktop
+# LightDM:  ""                     image is automatically updated (Thanks to Marco)
+# Other:    "?"                    We appreciate your feedback
 
 WM_RELOAD_CMD="xfdesktop --reload"
 
@@ -45,11 +46,17 @@ fi
 
 # Create a fresh default config for xplanet
 # xplanet doesn't appreciate ~/ or $HOME in default config
+#
+# Add/Remove satellite_file=${BASEDIR}/satellites/[your_tle_conf]
+# to the DEFCFG as needed.
+
 
 DEFCFG=$(cat << EOF
-satellite_file=${BASEDIR}/satellites/combined
-font=${FONT}
-fontsize=${FONTSIZE}
+satellite_file=${BASEDIR}/satellites/iss
+satellite_file=${BASEDIR}/satellites/noss
+satellite_file=${BASEDIR}/satellites/usa
+#satellite_file=${BASEDIR}/satellites/iridum
+#marker_file=${BASEDIR}/updatelabel
 
 [earth]
 "Earth"
@@ -81,7 +88,7 @@ do
 
     # Download new TLE package if local elements are older than 24h ####
 
-    if test "$(find ${BASEDIR}/satellites/combined -mmin +1440)";
+    if test "$(find ${BASEDIR}/satellites/.last_updated -mmin +1440)";
     then
         cd ${BASEDIR}/satellites/
         ${BASEDIR}/satellites/download-tle.sh
