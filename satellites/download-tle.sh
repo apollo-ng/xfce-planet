@@ -2,7 +2,7 @@
 
 # ISS (LEO) ####################################################################
 
-wget http://www.celestrak.com/NORAD/elements/stations.txt --no-cache -q -O stations.txt > /dev/null 2>&1
+wget http://www.celestrak.com/NORAD/elements/stations.txt -q -T 5 --no-cache -O stations.txt > /dev/null 2>&1
 
 if [ -s stations.txt ];
 then
@@ -14,7 +14,7 @@ fi
 
 # Iridium (LEO) ################################################################
 
-wget http://www.celestrak.com/NORAD/elements/iridium.txt --no-cache -q -O iridium.txt > /dev/null 2>&1
+wget http://www.celestrak.com/NORAD/elements/iridium.txt -q -T 5 --no-cache -O iridium.txt > /dev/null 2>&1
 
 if [ -s iridium.txt ];
 then
@@ -56,7 +56,7 @@ get_sats_by_name () {
     rm .${SAT_NAME}.tmp
 }
 
-wget https://www.prismnet.com/~mmccants/tles/classfd.zip --no-cache -q -O classfd.zip > /dev/null 2>&1
+wget https://www.prismnet.com/~mmccants/tles/classfd.zip -q -T 5 --no-cache -O classfd.zip > /dev/null 2>&1
 
 if [ -s classfd.zip ];
 then
@@ -77,7 +77,7 @@ fi
 
 # Remember that you need to zoom out your view (change RAD) to see these :)
 
-wget http://www.celestrak.com/NORAD/elements/geo.txt --no-cache -q -O geo.txt > /dev/null 2>&1
+wget http://www.celestrak.com/NORAD/elements/geo.txt -q -T 5 --no-cache -O geo.txt > /dev/null 2>&1
 
 if [ -s geo.txt ];
 then
@@ -92,6 +92,5 @@ then
     done < .geo.tmp
     rm .geo.tmp
 fi
-
 
 echo "$(date +%Y%m%d-%h%m)" > .last_updated
