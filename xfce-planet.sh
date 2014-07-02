@@ -31,7 +31,7 @@ check_dep () {
 if [ -r ${BASEDIR}/xfce-planet.conf ];
 then
     # Load config
-    source ${BASEDIR}/xfce-planet.conf
+    . ${BASEDIR}/xfce-planet.conf
 else
     # Likely to be a new install - check deps
     echo "Hmm, it seems, I have made it to another box... sweet :)"
@@ -47,7 +47,7 @@ else
 
     # Deploy config file from sample and load it
     cp xfce-planet.conf.sample xfce-planet.conf
-    source ${BASEDIR}/xfce-planet.conf
+    . ${BASEDIR}/xfce-planet.conf
     echo "I've copied the sample config file to xfce-planet.conf"
 fi
 
