@@ -1,16 +1,18 @@
 # xfce-planet
 
-A collection of resources and scripts to feed and manage xplanet's weather
-and satellite (two-line elements) files.
+A simple and easy to understand structure & collection of pre-selected resources
+and scripts to feed and control xplanet's high-definition textures, near-realtime
+cloudmap and satellite two-line elements (TLE) files.
 
-It was born out of the necessity to get xplanet to work with xfce or
-other compositing window managers, where xplanet cannot take over
-(or you don't want it to) the root window to draw on.
+It was born out of the necessity to get xplanet to work with xfce or other
+compositing multi screen window managers, where xplanet cannot simply take
+over the root window to draw on (or you don't want it to do so).
 
-Of course, it should be possible to use this with just minor tweaks
-for any other window manager.
+And, of course, you can use this with just minor tweaks for any other window manager.
 
 ![alt text](https://raw.githubusercontent.com/chron0/xfce-planet/master/example_output.jpg "Example output")
+
+
 
 ## Installation
 
@@ -19,26 +21,45 @@ for any other window manager.
 Make sure the following tools are available on your system:
 
 * xplanet
-* convert (imagemagick)
-* dos2unix (some TLE's have some really weird chars that break xplanet)
+* dos2unix (some TLE's have really weird WIN/DOS chars that break xplanet)
 * unzip
 * wget
-* bash
+* convert (imagemagick) - only when you use your own textures/cloudmaps
 
 ### Cloning the Repo
 
-    $ cd
     $ git clone https://github.com/chron0/xfce-planet.git
-    $ ln -s xfce-planet .xplanet
+
+### Set up a link
+
+This package provides all neccessary files in 5400x2700px high-definition
+resolution. If your distribution already placed a .xplanet folder in your
+$HOME, please move it to avoid collisions.
+
+    $ mv $HOME/.xplanet $HOME/.xplanet_dist
+
+Now set the fallback link for xplanet:
+
+    $ ln -s xfce-planet $HOME/.xplanet
+
+If you don't like this and want/need to deploy somewhere else you'll have to
+edit xfce-planet.sh and change the BASEDIR parameter accordingly. The rest
+should line up automatically again.
 
 ## Usage
 
-    $ cd .xplanet
+    $ cd $HOME/.xplanet
     $ ./xfce-planet.sh
 
 Or simply put it into your local .xinitrc/autostart system
 
 Then select xplanet_output.png as your background image in xfce.
+
+## Configuration
+
+On the first run, xfce-planet will copy a sample config to xfce-planet.conf.
+Please change all your local settings in there.
+
 
 The default sats are a subset of known USA/NRO spy satellites to remind
 oneself how far this totalitarian surveillance has come and the ISS
@@ -47,3 +68,23 @@ as a contrast showing a glimpse of global co-operation.
 Goes along very well with the experimental ISS HD payload live stream:
 
 http://www.ustream.tv/channel/iss-hdev-payload
+
+## Support
+
+Please use the issue tracker if you have problems or questions. We are looking
+forward to see feedback and pull requests. Or just join us in #apollo on freenode.
+
+## License
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

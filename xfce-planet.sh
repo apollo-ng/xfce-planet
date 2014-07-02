@@ -1,4 +1,17 @@
 #!/bin/sh
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 BASEDIR="${HOME}/.xplanet"
 
@@ -6,19 +19,33 @@ BASEDIR="${HOME}/.xplanet"
 # INIT                                                                         #
 ################################################################################
 
+check_dep () {
+    echo -n "Checking for $1 ... "
+    type -P $1 &>/dev/null && continue || {
+        echo "NOT INSTALLED";
+        exit 1
+    }
+    echo "OK"
+}
+
 if [ -r ${BASEDIR}/xfce-planet.conf ];
 then
+    # Load config
     source ${BASEDIR}/xfce-planet.conf
 else
-    echo "Hmm, it seems, I have made it to another new box... sweet :)"
-    echo "Let me just check your system if we got everything we'll need"
-    # FIXME: We should have a quick check for utils like
-    #     dos2unix
-    #     wget
-    #     convert
-    #     xplanet
-    #     unzip
-    # here...
+    # Likely to be a new install - check deps
+    echo "Hmm, it seems, I have made it to another box... sweet :)"
+    echo "Let me just check if we've got everything we'll need..."
+    check_dep find
+    check_dep awk
+    check_dep grep
+    check_dep dos2unix
+    check_dep wget
+    check_dep unzip
+    check_dep convert
+    check_dep xplanet
+
+    # Deploy config file from sample and load it
     cp xfce-planet.conf.sample xfce-planet.conf
     source ${BASEDIR}/xfce-planet.conf
     echo "I've copied the sample config file to xfce-planet.conf"
