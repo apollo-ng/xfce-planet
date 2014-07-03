@@ -4,7 +4,6 @@ download_tle () {
     wget $1 -q -T 5 --no-cache -O $2 > /dev/null 2>&1
 }
 
-
 # ISS (LEO) ####################################################################
 
 download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
@@ -32,9 +31,8 @@ then
         SAT=$(cat iridium.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
         echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> iridium
     done < .iridium.tmp
-    #rm .iridium.tmp
+    rm .iridium.tmp
 fi
-
 
 # Classified/Spy/Surveilance/Military (mostly LEO) #############################
 
@@ -74,7 +72,13 @@ then
     # Pick up all birds with NOSS* designators
     get_sats_by_name classfd.tle NOSS noss
 
-    rm classfd.*
+    # Pick up all birds with DSP* designators
+    get_sats_by_name classfd.tle DSP dsp
+
+    # Pick up all birds with Milstar* designators
+    get_sats_by_name classfd.tle Milstar milstar
+
+    rm classfd.zip
 
 fi
 
