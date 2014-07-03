@@ -1,8 +1,13 @@
 #!/bin/sh
 
+download_tle () {
+    wget $1 -q -T 5 --no-cache -O $2 > /dev/null 2>&1
+}
+
+
 # ISS (LEO) ####################################################################
 
-wget http://www.celestrak.com/NORAD/elements/stations.txt -q -T 5 --no-cache -O stations.txt > /dev/null 2>&1
+download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
 
 if [ -s stations.txt ];
 then
@@ -14,7 +19,7 @@ fi
 
 # Iridium (LEO) ################################################################
 
-wget http://www.celestrak.com/NORAD/elements/iridium.txt -q -T 5 --no-cache -O iridium.txt > /dev/null 2>&1
+download_tle http://www.celestrak.com/NORAD/elements/iridium.txt iridium.txt
 
 if [ -s iridium.txt ];
 then
@@ -24,10 +29,10 @@ then
     echo "" > iridium
     while read in;
     do
-        SAT=$(cat iridium.tle | grep --no-group-separator -A2 "${in:0:10}" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  ${in:8:10}\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> iridium
+        SAT=$(cat iridium.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
+        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> iridium
     done < .iridium.tmp
-    rm .iridium.tmp
+    #rm .iridium.tmp
 fi
 
 
@@ -49,14 +54,14 @@ get_sats_by_name () {
 
     while read in;
     do
-        SAT=$(cat ${TLE_NAME}.tle | grep -A2 "$in" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  $in\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> ${TLE_NAME}
+        SAT=$(cat ${TLE_NAME}.tle | grep -A2 "${in}" | tail -1 | awk '{print $2;}' )
+        echo "${SAT} \"  ${in}\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> ${TLE_NAME}
     done < .${SAT_NAME}.tmp
 
     rm .${SAT_NAME}.tmp
 }
 
-wget https://www.prismnet.com/~mmccants/tles/classfd.zip -q -T 5 --no-cache -O classfd.zip > /dev/null 2>&1
+download_tle https://www.prismnet.com/~mmccants/tles/classfd.zip classfd.zip
 
 if [ -s classfd.zip ];
 then
@@ -77,7 +82,7 @@ fi
 
 # Remember that you need to zoom out your view (change RAD) to see these :)
 
-wget http://www.celestrak.com/NORAD/elements/geo.txt -q -T 5 --no-cache -O geo.txt > /dev/null 2>&1
+download_tle http://www.celestrak.com/NORAD/elements/geo.txt geo.txt
 
 if [ -s geo.txt ];
 then
