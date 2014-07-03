@@ -11,7 +11,7 @@ download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
 if [ -s stations.txt ];
 then
     dos2unix stations.txt > /dev/null 2>&1
-    echo "$(cat stations.txt | grep -A2 ISS | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={255,255,255} altcirc=0 altcirc=45 trail={orbit,-15,5,1}" > iss
+    echo "$(cat stations.txt | grep -A2 ISS | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={255,255,255} altcirc=0 color={0,255,0} altcirc=45 trail={orbit,-15,5,1}" > iss
     cat stations.txt | grep --no-group-separator -A2 ISS > iss.tle
     rm stations.txt
 fi
@@ -29,12 +29,13 @@ then
     while read in;
     do
         SAT=$(cat iridium.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> iridium
+        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={12,50,117} fontsize=9 trail={orbit,-5,0,1}" >> iridium
     done < .iridium.tmp
     rm .iridium.tmp
 fi
 
 # Classified/Spy/Surveilance/Military (mostly LEO) #############################
+
 
 get_sats_by_name () {
 
@@ -78,8 +79,10 @@ then
     # Pick up all birds with Milstar* designators
     get_sats_by_name classfd.tle Milstar milstar
 
-    rm classfd.zip
+    # Have a look at satellites/classfd.tle to
+    # find more birds you may extract here as well
 
+    rm classfd.zip
 fi
 
 # Geostationary (GEO) ##########################################################
