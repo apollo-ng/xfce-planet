@@ -46,7 +46,7 @@ else
     done
 
     # Deploy config file from sample and load it
-    cp xfce-planet.conf.sample xfce-planet.conf
+    cp ${BASEDIR}/xfce-planet.conf.sample ${BASEDIR}/xfce-planet.conf
     . ${BASEDIR}/xfce-planet.conf
     echo "I've copied the sample config file to xfce-planet.conf"
 fi
@@ -119,16 +119,11 @@ do
     ABS_SATFILE=$(echo $TLE_LIST | cut -d " " -f $LN)
     SATFILE=$(basename  -s .tle "${ABS_SATFILE}")
 
-    echo "Using satellite file $SATFILE"
-
     echo "satellite_file=${BASEDIR}/satellites/iss" > ${BASEDIR}/default
     echo "satellite_file=${BASEDIR}/satellites/${SATFILE}" >> ${BASEDIR}/default
     echo "${DEFCFG}" >> ${BASEDIR}/default
 
     # Switch between available tle files with a defined delay ##################
-
-    echo "Is $COUNTER lower than $TLE_COUNT -- if not start from scratch"
-    echo "Is $DELAY_COUNT lower than $DELAY -- if not switch sat file"
 
     if [ ${COUNTER} -lt ${TLE_COUNT} ];
     then
