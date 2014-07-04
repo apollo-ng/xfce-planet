@@ -62,17 +62,8 @@ fi
 
 # Pick up the TLEs prepared by download-tle.sh in satellites/ ##################
 
-TLE_COUNT=0
-
-for tle_file in $(find ${BASEDIR}/satellites/ -name "*.tle");
-do
-    FILE=$(basename "${tle_file}")
-    if [ "${FILE%.*}" != "iss" ];
-    then
-        AR_TLE[$TLE_COUNT]=${FILE%.*}
-        TLE_COUNT=TLE_COUNT+1
-    fi
-done
+TLE_LIST=$(find ${BASEDIR}/satellites/ -name "*.tle" | grep -v iss.tle)
+TLE_COUNT=$(echo $TLE_LIST | wc -w)
 
 COUNTER=0
 DELAY_COUNT=0
@@ -110,8 +101,8 @@ do
     then
         LINK=$(ls -al ${BASEDIR}/world/earth.jpg | awk {'print $11;'})
         MONTH_OF_FILE=$(echo $LINK | awk '{ string=substr($0, 1, 2); print string;}')
-        
-        if [ "${MONTH}" != "$MONTH_OF_FILE" ];
+
+        if [ "${MONTH}" != "${MONTH_OF_FILE}" ];
         then
             rm earth.jpg
             ln -s ${MONTH}.jpg earth.jpg
@@ -124,19 +115,28 @@ do
 
     # Prep xplanets default config for this run ################################
 
+    LN=$(($COUNTER+1))
+    ABS_SATFILE=$(echo $TLE_LIST | cut -d " " -f $LN)
+    SATFILE=$(basename  -s .tle "${ABS_SATFILE}")
+
+    echo "Using satellite file $SATFILE"
+
     echo "satellite_file=${BASEDIR}/satellites/iss" > ${BASEDIR}/default
-    echo "satellite_file=${BASEDIR}/satellites/${AR_TLE[${COUNTER}]}" >> ${BASEDIR}/default
+    echo "satellite_file=${BASEDIR}/satellites/${SATFILE}" >> ${BASEDIR}/default
     echo "${DEFCFG}" >> ${BASEDIR}/default
 
     # Switch between available tle files with a defined delay ##################
 
-    if [ ${COUNTER} -lt $TLE_COUNT ];
+    echo "Is $COUNTER lower than $TLE_COUNT -- if not start from scratch"
+    echo "Is $DELAY_COUNT lower than $DELAY -- if not switch sat file"
+
+    if [ ${COUNTER} -lt ${TLE_COUNT} ];
     then
         if [ ${DELAY_COUNT} -lt ${DELAY} ];
         then
-            DELAY_COUNT=DELAY_COUNT+1
+            DELAY_COUNT=$(($DELAY_COUNT+1))
         else
-            COUNTER=COUNTER+1
+            COUNTER=$((COUNTER+1))
             DELAY_COUNT=0
         fi
     else
