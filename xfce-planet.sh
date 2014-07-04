@@ -19,31 +19,31 @@ BASEDIR="${HOME}/.xplanet"
 # INIT                                                                         #
 ################################################################################
 
-check_dep () {
-    echo -n "Checking for $1 ... "
-    type -P $1 &>/dev/null && continue || {
-        echo "NOT INSTALLED";
-        exit 1
-    }
-    echo "OK"
-}
-
 if [ -r ${BASEDIR}/xfce-planet.conf ];
 then
     # Load config
     . ${BASEDIR}/xfce-planet.conf
 else
-    # Likely to be a new install - check deps
+    # Likely to be a new install
     echo "Hmm, it seems, I have made it to another box... sweet :)"
     echo "Let me just check if we've got everything we'll need..."
-    check_dep find
-    check_dep awk
-    check_dep grep
-    check_dep dos2unix
-    check_dep wget
-    check_dep unzip
-    check_dep convert
-    check_dep xplanet
+
+    # Check Dependencies
+
+    DEPENDENCIES="awk convert dos2unix find grep unzip wget xplanet"
+
+    for i in $DEPENDENCIES;
+    do
+        echo -n "Checking for $i ... "
+        LOC=$(type $i 2>&1 >/dev/null)
+        if [ $? -eq 0 ];
+        then
+            echo "OK"
+        else
+            echo "NOT FOUND"
+            exit 1
+        fi
+    done
 
     # Deploy config file from sample and load it
     cp xfce-planet.conf.sample xfce-planet.conf

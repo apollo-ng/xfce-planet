@@ -4,7 +4,6 @@ download_tle () {
     wget $1 -q -T 5 --no-cache -O $2 > /dev/null 2>&1
 }
 
-
 # ISS (LEO) ####################################################################
 
 download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
@@ -12,7 +11,7 @@ download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
 if [ -s stations.txt ];
 then
     dos2unix stations.txt > /dev/null 2>&1
-    echo "$(cat stations.txt | grep -A2 ISS | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={255,255,255} altcirc=0 altcirc=45 trail={orbit,-15,5,1}" > iss
+    echo "$(cat stations.txt | grep -A2 ISS | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={200,200,200} altcirc=0 altcirc=45 trail={orbit,-15,5,1}" > iss
     cat stations.txt | grep --no-group-separator -A2 ISS > iss.tle
     rm stations.txt
 fi
@@ -30,13 +29,13 @@ then
     while read in;
     do
         SAT=$(cat iridium.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> iridium
+        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={70,70,250} fontsize=9 trail={orbit,-5,0,1}" >> iridium
     done < .iridium.tmp
-    #rm .iridium.tmp
+    rm .iridium.tmp
 fi
 
-
 # Classified/Spy/Surveilance/Military (mostly LEO) #############################
+
 
 get_sats_by_name () {
 
@@ -55,7 +54,7 @@ get_sats_by_name () {
     while read in;
     do
         SAT=$(cat ${TLE_NAME}.tle | grep -A2 "${in}" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  ${in}\" image=satellites/sat.png transparent={0,0,0} color={117,137,12} fontsize=9 trail={orbit,-5,0,1}" >> ${TLE_NAME}
+        echo "${SAT} \"  ${in}\" image=satellites/sat.png transparent={0,0,0} color={255,71,0} fontsize=9 trail={orbit,-5,0,1}" >> ${TLE_NAME}
     done < .${SAT_NAME}.tmp
 
     rm .${SAT_NAME}.tmp
@@ -74,8 +73,16 @@ then
     # Pick up all birds with NOSS* designators
     get_sats_by_name classfd.tle NOSS noss
 
-    rm classfd.*
+    # Pick up all birds with DSP* designators
+    get_sats_by_name classfd.tle DSP dsp
 
+    # Pick up all birds with Milstar* designators
+    get_sats_by_name classfd.tle Milstar milstar
+
+    # Have a look at satellites/classfd.tle to
+    # find more birds you may extract here as well
+
+    rm classfd.zip
 fi
 
 # Geostationary (GEO) ##########################################################
