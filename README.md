@@ -10,7 +10,7 @@ over the root window to draw on (or you don't want it to do so).
 
 And, of course, you can use this with just minor tweaks for any other window manager.
 
-![alt text](https://raw.githubusercontent.com/chron0/xfce-planet/master/example_output.jpg "Example output")
+![alt text](https://raw.githubusercontent.com/apollo-ng/xfce-planet/master/example_output.jpg "Example output")
 
 
 
@@ -28,7 +28,7 @@ Make sure the following tools are available on your system:
 
 ### Cloning the Repo
 
-    $ git clone https://github.com/chron0/xfce-planet.git
+    $ git clone https://github.com/apollo-ng/xfce-planet.git
 
 ### Set up a link
 
@@ -65,9 +65,18 @@ The default sats are a subset of known USA/NRO spy satellites to remind
 oneself how far this totalitarian surveillance has come and the ISS
 as a contrast showing a glimpse of global co-operation.
 
-Goes along very well with the experimental ISS HD payload live stream:
+## Bonus Points
+
+Goes along very well with the experimental ISS HDEV payload live stream:
 
 http://www.ustream.tv/channel/iss-hdev-payload
+
+And if you want to have it as a live backdrop on the desktop of your
+second monitor, have a look at https://github.com/chrippa/livestreamer and
+xwinwrap :)
+
+    $ livestreamer -Q http://www.ustream.tv/channel/iss-hdev-payload best --player \
+      "./xwinwrap -ni -fs -s -st -sp -b -nf -- mplayer2 -wid WID -nosound
 
 ## Support
 
