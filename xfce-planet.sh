@@ -70,7 +70,7 @@ do
     if [ "${FILE%.*}" != "iss" ];
     then
         AR_TLE[$TLE_COUNT]=${FILE%.*}
-        let TLE_COUNT=TLE_COUNT+1
+        TLE_COUNT=TLE_COUNT+1
     fi
 done
 
@@ -109,7 +109,9 @@ do
     if [ -e ${BASEDIR}/world/earth.jpg ];
     then
         LINK=$(ls -al ${BASEDIR}/world/earth.jpg | awk {'print $11;'})
-        if [ "${MONTH}" != "${LINK:0:2}" ];
+        MONTH_OF_FILE=$(echo $LINK | awk '{ string=substr($0, 1, 2); print string;}')
+        
+        if [ "${MONTH}" != "$MONTH_OF_FILE" ];
         then
             rm earth.jpg
             ln -s ${MONTH}.jpg earth.jpg
@@ -132,9 +134,9 @@ do
     then
         if [ ${DELAY_COUNT} -lt ${DELAY} ];
         then
-            let DELAY_COUNT=DELAY_COUNT+1
+            DELAY_COUNT=DELAY_COUNT+1
         else
-            let COUNTER=COUNTER+1
+            COUNTER=COUNTER+1
             DELAY_COUNT=0
         fi
     else
