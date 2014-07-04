@@ -126,6 +126,16 @@ do
     echo "satellite_file=${BASEDIR}/satellites/${AR_TLE[${COUNTER}]}" >> ${BASEDIR}/default
     echo "${DEFCFG}" >> ${BASEDIR}/default
 
+    # Set viewing distance according to current sat class (leo/geo)
+
+    ORBIT=(${AR_TLE[${COUNTER}]//_/ })
+    if [ "${ORBIT[1]}" == "geo" ];
+    then
+        VIEW=10
+    else
+        VIEW=$RAD
+    fi
+
     # Switch between available tle files with a defined delay ##################
 
     if [ ${COUNTER} -lt $TLE_COUNT ];
@@ -146,7 +156,7 @@ do
     nice -n 19 xplanet                                                         \
             -latitude ${LAT} -longitude ${LON}                                 \
             -geometry ${RES}                                                   \
-            -radius ${RAD}                                                     \
+            -radius ${VIEW}                                                    \
             -quality 90                                                        \
             -font ${FONT}                                                      \
             -fontsize ${FONTSIZE}                                              \
