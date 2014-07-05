@@ -125,8 +125,9 @@ do
 
     # Set viewing distance according to current sat class (leo/geo)
 
-    ORBIT=(${AR_TLE[${COUNTER}]//_/ })
-    if [ "${ORBIT[1]}" == "geo" ];
+    SAT_TYPE=$(echo $SATFILE | cut -d "_" -f 2)
+
+    if [ "${SAT_TYPE}" = "geo" ];
     then
         VIEW=10
     else
