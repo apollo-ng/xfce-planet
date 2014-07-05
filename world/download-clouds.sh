@@ -21,9 +21,6 @@ then
     # Generate checksum of downloaded file
     NEWSHA=$(sha256sum global.jpg | awk {'print $1;'})
 
-    echo "new checksum: $NEWSHA"
-    echo "origin checksum: $ORIGINSHA"
-
     # Check if download's chksum corresponds to to origin
     if [ "$NEWSHA" = "$ORIGINSHA" ];
     then
