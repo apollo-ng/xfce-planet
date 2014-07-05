@@ -25,7 +25,7 @@ then
     echo "origin checksum: $ORIGINSHA"
 
     # Check if download's chksum corresponds to to origin
-    if [ "$NEWSHA" == "$ORIGINSHA" ];
+    if [ "$NEWSHA" = "$ORIGINSHA" ];
     then
         mv global.jpg clouds.jpg
     else
