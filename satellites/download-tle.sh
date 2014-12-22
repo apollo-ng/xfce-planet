@@ -24,14 +24,19 @@ if [ -s iridium.txt ];
 then
     dos2unix iridium.txt > /dev/null 2>&1
     mv iridium.txt iridium_leo.tle
-    cat iridium_leo.tle | grep IRIDIUM > .iridium.tmp
-    echo "" > iridium_leo
-    while read in;
-    do
-        SAT=$(cat iridium_leo.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3 " "";}')\" image=satellites/sat.png transparent={0,0,0} color={70,70,250} fontsize=9 trail={orbit,-5,0,1}" >> iridium_leo
-    done < .iridium.tmp
-    rm .iridium.tmp
+
+    <iridium_leo.tle while read tlename; do
+        name=$(echo "$tlename" |sed 's/IRIDIUM //;s/ \[.\] *//')
+        type=$(echo "$tlename" |sed 's/.*\[\(.\)\].*/\1/')
+        read dummy
+        read dummy SAT dummy
+        case $type in # Make inactive sats darker
+            -) color='10,10,090'; img="sat-dark.png" ;;
+            *) color='70,70,250'; img="sat.png" ;;
+        esac
+
+        echo "${SAT} {$name} image=satellites/$sat transparent={0,0,0} color={$color} fontsize=9 trail={orbit,-5,0,1}"
+    done >iridium_leo
 fi
 
 # Classified/Spy/Surveilance/Military (mostly LEO) #############################
