@@ -29,7 +29,7 @@ then
     while read in;
     do
         SAT=$(cat iridium_leo.tle | grep --no-group-separator -A2 "$(echo "${in}" | awk '{print $1 " " $2;}' )" | tail -1 | awk '{print $2;}' )
-        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3;}')\" image=satellites/sat.png transparent={0,0,0} color={70,70,250} fontsize=9 trail={orbit,-5,0,1}" >> iridium_leo
+        echo "${SAT} \"  $(echo "${in}" | awk '{print $2 " " $3 " "";}')\" image=satellites/sat.png transparent={0,0,0} color={70,70,250} fontsize=9 trail={orbit,-5,0,1}" >> iridium_leo
     done < .iridium.tmp
     rm .iridium.tmp
 fi
