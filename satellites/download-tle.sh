@@ -25,7 +25,7 @@ then
     dos2unix iridium.txt > /dev/null 2>&1
     mv iridium.txt iridium_leo.tle
 
-    <iridium_leo.tle while read tlename; do
+    while read tlename; do
         name=$(echo "$tlename" |sed 's/IRIDIUM //;s/ \[.\] *//')
         type=$(echo "$tlename" |sed 's/.*\[\(.\)\].*/\1/')
         read dummy
@@ -35,8 +35,8 @@ then
             *) color='70,70,250'; img="sat.png" ;;
         esac
 
-        echo "${SAT} {$name} image=satellites/$sat transparent={0,0,0} color={$color} fontsize=9 trail={orbit,-5,0,1}"
-    done >iridium_leo
+        echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={$color} fontsize=9 trail={orbit,-5,0,1}"
+    done <iridium_leo.tle >iridium_leo
 fi
 
 # Classified/Spy/Surveilance/Military (mostly LEO) #############################
