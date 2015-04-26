@@ -176,12 +176,9 @@ do
     # so that a system running on battery automatically decreases the update
     # frequency (longer SLEEP) to enhance battery endurance when off-grid.
 
-    if [ -r /sys/class/power_supply/AC/online ];
+    if [ -r /sys/class/power_supply/AC/online -a $(cat /sys/class/power_supply/AC/online) -eq 1 ];
     then
-        if [ $(cat /sys/class/power_supply/AC/online) -eq 1 ];
-        then
-            sleep ${SLEEP_ON_AC}
-        fi
+        sleep ${SLEEP_ON_AC}
     else
         sleep ${SLEEP_ON_BAT}
     fi
