@@ -37,6 +37,7 @@ then
 
         echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={$color} fontsize=9 trail={orbit,-5,0,1}"
     done <iridium_leo.tle >iridium_leo
+    img="sat.png"
 fi
 
 # GLONASS
@@ -67,10 +68,11 @@ then
     mv starlink.txt starlink_leo.tle
 
     while read tlename; do
+        name=$(echo "$tlename" |sed 's/STARLINK-//;s/ \[.\] *//')
         read dummy
         read dummy SAT dummy
 
-        echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={0,246,255} fontsize=9 trail={orbit,-5,0,1}"
+        echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={0,246,255} fontsize=9 trail={orbit,-3,0,1}"
     done <starlink_leo.tle >starlink_leo
 fi
 
