@@ -121,7 +121,7 @@ do
 
     echo "satellite_file=${BASEDIR}/satellites/iss_leo" > ${BASEDIR}/default
     echo "satellite_file=${BASEDIR}/satellites/${SATFILE}" >> ${BASEDIR}/default
-    echo "${DEFCFG}" >> ${BASEDIR}/default
+    echo "${DEFCFG}" > ${BASEDIR}/default
 
     # Set viewing distance according to current sat class (leo/geo)
 
