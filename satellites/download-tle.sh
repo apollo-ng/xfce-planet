@@ -11,7 +11,7 @@ download_tle http://www.celestrak.com/NORAD/elements/stations.txt stations.txt
 if [ -s stations.txt ];
 then
     dos2unix stations.txt > /dev/null 2>&1
-    echo "$(cat stations.txt | grep -A2 ISS | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={200,200,200} altcirc=0 altcirc=45 trail={orbit,-15,5,1}" > iss_leo
+    echo "$(cat stations.txt | grep -A2 ISS | head -n3 | tail -1 | awk '{print $2;}') \"  ISS\" image=satellites/iss.png transparent={0,0,0} color={200,200,200} altcirc=0 altcirc=45 trail={orbit,-15,5,1}" > iss_leo
     cat stations.txt | grep --no-group-separator -A2 ISS > iss_leo.tle
     rm stations.txt
 fi
@@ -39,8 +39,43 @@ then
     done <iridium_leo.tle >iridium_leo
 fi
 
-# Classified/Spy/Surveilance/Military (mostly LEO) #############################
+# GLONASS
 
+download_tle https://celestrak.com/NORAD/elements/glo-ops.txt glo-ops.txt
+
+if [ -s glo-ops.txt ];
+then
+    dos2unix glo-ops.txt > /dev/null 2>&1
+    mv glo-ops.txt glonass_leo.tle
+
+    while read tlename; do
+        read dummy
+        read dummy SAT dummy
+
+        echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={$color} fontsize=9 trail={orbit,-5,0,1}"
+    done <glonass_leo.tle >glonass_leo
+fi
+
+
+# Starlink
+
+download_tle https://celestrak.com/NORAD/elements/starlink.txt starlink.txt
+
+if [ -s starlink.txt ];
+then
+    dos2unix starlink.txt > /dev/null 2>&1
+    mv starlink.txt starlink_leo.tle
+
+    while read tlename; do
+        read dummy
+        read dummy SAT dummy
+
+        echo "${SAT} {$name} image=satellites/$img transparent={0,0,0} color={0,246,255} fontsize=9 trail={orbit,-5,0,1}"
+    done <starlink_leo.tle >starlink_leo
+fi
+
+
+# Classified/Spy/Surveilance/Military (mostly LEO) #############################
 
 get_sats_by_name () {
 

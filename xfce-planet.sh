@@ -62,7 +62,7 @@ fi
 
 # Pick up the TLEs prepared by download-tle.sh in satellites/ ##################
 
-TLE_LIST=$(find ${BASEDIR}/satellites/ -name "*.tle" | grep -v iss.tle)
+TLE_LIST=$(find ${BASEDIR}/satellites/ -name "*.tle" | grep -v iss_leo.tle)
 TLE_COUNT=$(echo $TLE_LIST | wc -w)
 
 COUNTER=0
@@ -119,7 +119,7 @@ do
     ABS_SATFILE=$(echo $TLE_LIST | cut -d " " -f $LN)
     SATFILE=$(basename  -s .tle "${ABS_SATFILE}")
 
-    echo "satellite_file=${BASEDIR}/satellites/iss" > ${BASEDIR}/default
+    echo "satellite_file=${BASEDIR}/satellites/iss_leo" > ${BASEDIR}/default
     echo "satellite_file=${BASEDIR}/satellites/${SATFILE}" >> ${BASEDIR}/default
     echo "${DEFCFG}" >> ${BASEDIR}/default
 
